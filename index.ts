@@ -205,3 +205,25 @@ class LineBarRacer {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    animator : Animator = new Animator()
+    lbr : LineBarRacer = new LineBarRacer()
+
+    render(context : CanvasRenderingContext2D) {
+        this.lbr.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.lbr.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.lbr.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
