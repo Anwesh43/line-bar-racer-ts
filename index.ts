@@ -1,7 +1,7 @@
 const w : number = window.innerWidth 
 const h : number = window.innerHeight 
-const parts : number = 4
-const scGap : number = 0.02 / parts
+const parts : number = 5
+const scGap : number = 0.04 / parts
 const strokeFactor : number = 90 
 const delay : number = 20 
 const sizeFactor : number = 6.9 
@@ -43,6 +43,9 @@ class DrawingUtil {
         const sc5 : number = ScaleUtil.divideScale(scale, 4, parts)
         const size : number = Math.min(w, h) / sizeFactor 
         const bar : number = Math.min(w, h) / barFactor 
+        if (sc1 <= 0 || sc5 >= 1) {
+            return 
+        }
         context.save()
         context.translate(w / 2, h / 2)
         for (var j = 0; j < 2; j++) {
@@ -50,10 +53,16 @@ class DrawingUtil {
             context.scale(1 - 2 * j, 1)
             context.translate(-size / 2, 0)
             context.rotate((-Math.PI / 2) * sc2)
-            DrawingUtil.drawLine(context, size * sc5, 0, size * sc1, 0)
+            DrawingUtil.drawLine(
+                context,
+                size * sc5,
+                0,
+                size * sc1 * (1 - j) + size * Math.floor(sc1) * j,
+                0
+            )
             context.restore()
         }
-        context.fillRect(size * sc4, -bar, size * (sc3 - sc4), bar)
+        context.fillRect(-size / 2 + size * sc4, -bar, size * (sc3 - sc4), bar)
         context.restore()
     }
 
@@ -62,6 +71,7 @@ class DrawingUtil {
         context.lineWidth = Math.min(w, h) / strokeFactor 
         context.strokeStyle = colors[i]
         context.fillStyle = colors[i]
+        DrawingUtil.drawLineBarRacer(context, scale)
     }
 }
 
